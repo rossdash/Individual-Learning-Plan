@@ -1,0 +1,61 @@
+/**
+ * CSS rules for the ilps artefact plugin
+ *
+ * Copyright (C) 2006-2009 Catalyst IT
+ * This file is distributed under the same terms as Mahara itself
+ */
+th.ilpscontrols {
+    width: 40px; !important;
+}
+
+#ilpswrap table {
+	width: 100%;
+}
+
+#ilpswrap table td {
+    text-align: left;
+}
+#ilpswrap table td.right {
+    text-align: right;
+}
+
+#ilpswrap table th {
+	text-align: left;
+	padding: 0.25em;
+}
+
+#ilpswrap table th.right {
+	text-align: right;
+	padding: 0.25em;
+}
+
+#container #ilpswrap table td.errmsg {
+   padding-left: 20px;
+}
+
+fieldset legend.ilpsh3 a {
+	background: none;
+	padding: 0;
+}
+
+ul.ilpslist {
+	margin: 0;
+}
+ul.ilpslist li {
+	list-style: none;
+	margin: 0 0 3px 0;
+}
+.codesc {
+	font-size: .9167em;
+}
+#unitslist td {
+	padding: 3px 5px 3px 5px;
+}
+.summarypoints {
+	border-style: solid;
+	border-width: 1px 0px 1px 0px;
+	border-color: #cccccc;	
+}
+.feedbackpoints th.right{
+color: #1a63b4;	
+}

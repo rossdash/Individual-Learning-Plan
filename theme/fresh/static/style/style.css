@@ -1,0 +1,19 @@
+/**
+ * CSS rules for the ilps artefact plugin
+ *
+ * Copyright (C) 2006-2009 Catalyst IT
+ * This file is distributed under the same terms as Mahara itself
+ */
+#ilpswrap table tr.incomplete {
+    background: #ffd2d8;
+    color: #DD0221;
+    border-top: 1px solid #080D0F;
+}
+#ilpswrap table tr.incomplete a.btn-edit {
+    color: #458400;
+}
+.summaryhours {
+	 border-style: solid;
+	 border-width: 1px 0px 1px 0px;
+    border-color: #cccccc;
+}
