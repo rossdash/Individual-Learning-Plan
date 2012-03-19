@@ -218,7 +218,7 @@ class ArtefactTypeilp extends ArtefactType {
 
         $artefact->set('title', $values['title']);
         $artefact->set('description', $values['description']);
-        $artefact->set('points', $values['points']);
+        $artefact->set('points', (int) $values['points']);
         $artefact->commit();
 
         $SESSION->add_ok_msg(get_string('ilpsavedsuccessfully', 'artefact.ilps'));
