@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mahara: Electronic portfolio, weblog, resume builder and social networking
  * Copyright (C) 2006-2008 Catalyst IT Ltd (http://www.catalyst.net.nz)
@@ -23,7 +24,6 @@
  * @copyright  (C) 2012 Ross Dash
  *
  */
-
 defined('INTERNAL') || die();
 
 class PluginArtefactilps extends PluginArtefact {
@@ -44,29 +44,75 @@ class PluginArtefactilps extends PluginArtefact {
     }
 
     public static function menu_items() {
-          return array(
-            array(       	
-                    'path' => 'content/ilps',
-                    'title' => get_string('ilps', 'artefact.ilps'),
-                    'url'  => 'artefact/ilps/',
-                    'weight' => 40,
+        return array(
+            array(
+                'path' => 'content/ilps',
+                'title' => get_string('ilps', 'artefact.ilps'),
+                'url' => 'artefact/ilps/',
+                'weight' => 40,
             ),
-          );
+        );
     }
 
 }
 
 class ArtefactTypeilp extends ArtefactType {
 
+    protected $points;
+
     public function __construct($id = 0, $data = null) {
         parent::__construct($id, $data);
+
         if (empty($this->id)) {
             $this->container = 1;
         }
+
+        // load points
+        if ($this->id) {
+            $points = get_field('artefact_ilps_points', 'points', 'artefact', $this->id);
+            $this->points = $points;
+        }
     }
 
+     public static function get_points($id) {
+         $points = get_field('artefact_ilps_points', 'points', 'artefact', $id);
+        return $points;
+    }
     public static function get_links($id) {
         return array();
+    }
+
+    public function commit() {
+        if (empty($this->dirty)) {
+            return;
+        }
+
+        // Return whether or not the commit worked
+        $success = false;
+
+        db_begin();
+        $new = empty($this->id);
+
+        parent::commit();
+
+        $this->dirty = true;
+
+        $data = (object) array(
+                    'artefact' => $this->get('id'),
+                    'points' => $this->get('points'),
+        );
+
+        if ($new) {
+            $success = insert_record('artefact_ilps_points', $data);
+        } else {
+            $success = update_record('artefact_ilps_points', $data, 'artefact');
+        }
+
+        db_commit();
+
+        $this->dirty = $success ? false : true;
+
+        return $success;
     }
 
     public function delete() {
@@ -75,17 +121,19 @@ class ArtefactTypeilp extends ArtefactType {
         }
 
         db_begin();
+        delete_records('artefact_ilps_points', 'artefact', $this->id);
+        
         parent::delete();
         db_commit();
     }
 
-    public static function get_icon($options=null) {
+    public static function get_icon($options = null) {
+        
     }
 
     public static function is_singular() {
         return false;
     }
-
 
     /**
      * This function returns a list of the given user's ilps.
@@ -94,18 +142,20 @@ class ArtefactTypeilp extends ArtefactType {
      * @param offset current page to display
      * @return array (count: integer, data: array)
      */
-    public static function get_ilps($offset=0, $limit=10) {
+    public static function get_ilps($offset = 0, $limit = 10) {
         global $USER;
 
-        ($ilps = get_records_sql_array("SELECT * FROM {artefact}
-                                        WHERE owner = ? AND artefacttype = 'ilp'
-                                        ORDER BY id", array($USER->get('id')), $offset, $limit))
-                                        || ($ilps = array());
+        ($ilps = get_records_sql_array("SELECT *
+            FROM {artefact} a
+            JOIN {artefact_ilps_points} at ON at.artefact = a.id
+            WHERE artefacttype = 'ilp' AND owner = ?
+            ORDER BY id", array($USER->get('id')), $offset, $limit))
+                || ($ilps = array());
         $result = array(
-            'count'  => count_records('artefact', 'owner', $USER->get('id'), 'artefacttype', 'ilp'),
-            'data'   => $ilps,
+            'count' => count_records('artefact', 'owner', $USER->get('id'), 'artefacttype', 'ilp'),
+            'data' => $ilps,
             'offset' => $offset,
-            'limit'  => $limit,
+            'limit' => $limit,
         );
 
         return $result;
@@ -136,7 +186,7 @@ class ArtefactTypeilp extends ArtefactType {
             'numbersincludefirstlast' => false,
             'resultcounttextsingular' => get_string('ilp', 'artefact.ilps'),
             'resultcounttextplural' => get_string('ilps', 'artefact.ilps'),
-        ));
+                ));
         $ilps['pagination'] = $pagination['html'];
         $ilps['pagination_js'] = $pagination['javascript'];
     }
@@ -147,7 +197,7 @@ class ArtefactTypeilp extends ArtefactType {
             $id = (int) $values['ilp'];
             $artefact = new ArtefactTypeilp($id);
             if (!$USER->can_edit_artefact($artefact)) {
-                $form->set_error('submit', get_string('canteditdontown'));
+                $form->set_error('submit', get_string('canteditdontownilp', 'artefact.ilps'));
             }
         }
     }
@@ -160,8 +210,7 @@ class ArtefactTypeilp extends ArtefactType {
         if (!empty($values['ilp'])) {
             $id = (int) $values['ilp'];
             $artefact = new ArtefactTypeilp($id);
-        }
-        else {
+        } else {
             $artefact = new ArtefactTypeilp();
             $artefact->set('owner', $USER->get('id'));
             $new = true;
@@ -169,36 +218,36 @@ class ArtefactTypeilp extends ArtefactType {
 
         $artefact->set('title', $values['title']);
         $artefact->set('description', $values['description']);
+        $artefact->set('points', $values['points']);
         $artefact->commit();
 
         $SESSION->add_ok_msg(get_string('ilpsavedsuccessfully', 'artefact.ilps'));
 
         if ($new) {
-            redirect('/artefact/ilps/ilp.php?id='.$artefact->get('id'));
-        }
-        else {
+            redirect('/artefact/ilps/ilp.php?id=' . $artefact->get('id'));
+        } else {
             redirect('/artefact/ilps/');
         }
     }
 
     /**
-    * Gets the new/edit ilps pieform
-    *
-    */
-    public static function get_form($ilp=null) {
+     * Gets the new/edit ilps pieform
+     *
+     */
+    public static function get_form($ilp = null) {
         require_once(get_config('libroot') . 'pieforms/pieform.php');
         $elements = call_static_method(generate_artefact_class_name('ilp'), 'get_ilpform_elements', $ilp);
         $elements['submit'] = array(
             'type' => 'submitcancel',
-            'value' => array(get_string('saveilp','artefact.ilps'), get_string('cancel')),
+            'value' => array(get_string('saveilp', 'artefact.ilps'), get_string('cancel')),
             'goto' => get_config('wwwroot') . 'artefact/ilps/',
         );
         $ilpform = array(
             'name' => empty($ilp) ? 'addilp' : 'editilp',
             'plugintype' => 'artefact',
             'pluginname' => 'unit',
-            'validatecallback' => array(generate_artefact_class_name('ilp'),'validate'),
-            'successcallback' => array(generate_artefact_class_name('ilp'),'submit'),
+            'validatecallback' => array(generate_artefact_class_name('ilp'), 'validate'),
+            'successcallback' => array(generate_artefact_class_name('ilp'), 'submit'),
             'elements' => $elements,
         );
 
@@ -206,9 +255,9 @@ class ArtefactTypeilp extends ArtefactType {
     }
 
     /**
-    * Gets the new/edit fields for the ilp pieform
-    *
-    */
+     * Gets the new/edit fields for the ilp pieform
+     *
+     */
     public static function get_ilpform_elements($ilp) {
         $elements = array(
             'title' => array(
@@ -220,8 +269,17 @@ class ArtefactTypeilp extends ArtefactType {
                     'required' => true,
                 ),
             ),
+            'points' => array(
+                'type' => 'text',
+                'defaultvalue' => null,
+                'title' => get_string('points', 'artefact.ilps'),
+                'size' => 3,
+                'rules' => array(
+                    'required' => true,
+                ),
+            ),
             'description' => array(
-                'type'  => 'textarea',
+                'type' => 'textarea',
                 'rows' => 10,
                 'cols' => 50,
                 'resizable' => false,
@@ -271,14 +329,14 @@ class ArtefactTypeilp extends ArtefactType {
         $smarty->assign_by_ref('units', $units);
         if (isset($options['viewid'])) {
             $smarty->assign('artefacttitle', '<a href="' . $baseurl . '">' . hsc($this->get('title')) . '</a>');
-        }
-        else {
+        } else {
             $smarty->assign('artefacttitle', hsc($this->get('title')));
         }
         $smarty->assign('ilp', $this);
 
         return array('html' => $smarty->fetch('artefact:ilps:viewilp.tpl'), 'javascript' => '');
     }
+
 }
 
 class ArtefactTypeUnit extends ArtefactType {
@@ -299,13 +357,12 @@ class ArtefactTypeUnit extends ArtefactType {
 
         if ($this->id) {
             if ($pdata = get_record('artefact_ilps_unit', 'artefact', $this->id, null, null, null, null, '*, ' . db_format_tsfield('targetcompletion') . ', ' . db_format_tsfield('datecompleted'))) {
-                foreach($pdata as $name => $value) {
+                foreach ($pdata as $name => $value) {
                     if (property_exists($this, $name)) {
                         $this->$name = $value;
                     }
                 }
-            }
-            else {
+            } else {
                 // This should never happen unless the user is playing around with unit IDs in the status bar or similar
                 throw new ArtefactNotFoundException(get_string('unitdoesnotexist', 'artefact.ilps'));
             }
@@ -316,7 +373,8 @@ class ArtefactTypeUnit extends ArtefactType {
         return array();
     }
 
-    public static function get_icon($options=null) {
+    public static function get_icon($options = null) {
+        
     }
 
     public static function is_singular() {
@@ -347,18 +405,17 @@ class ArtefactTypeUnit extends ArtefactType {
         if (!empty($targetcompletion)) {
             $date = db_format_timestamp($targetcompletion);
         }
-            $data = (object)array(
-            'artefact'  => $this->get('id'),
-            'points' => $this->get('points'),
-            'status' => $this->get('status'),
-            'targetcompletion' => $date,
-            'datecompleted' => db_format_timestamp($this->get('datecompleted')),
+        $data = (object) array(
+                    'artefact' => $this->get('id'),
+                    'points' => $this->get('points'),
+                    'status' => $this->get('status'),
+                    'targetcompletion' => $date,
+                    'datecompleted' => db_format_timestamp($this->get('datecompleted')),
         );
 
         if ($new) {
             $success = insert_record('artefact_ilps_unit', $data);
-        }
-        else {
+        } else {
             $success = update_record('artefact_ilps_unit', $data, 'artefact');
         }
 
@@ -398,25 +455,24 @@ class ArtefactTypeUnit extends ArtefactType {
         db_commit();
     }
 
-
     /**
-    * Gets the new/edit units pieform
-    *
-    */
-    public static function get_form($parent, $unit=null) {
+     * Gets the new/edit units pieform
+     *
+     */
+    public static function get_form($parent, $unit = null) {
         require_once(get_config('libroot') . 'pieforms/pieform.php');
         $elements = call_static_method(generate_artefact_class_name('unit'), 'get_unitform_elements', $parent, $unit);
         $elements['submit'] = array(
             'type' => 'submitcancel',
-            'value' => array(get_string('saveunit','artefact.ilps'), get_string('cancel')),
+            'value' => array(get_string('saveunit', 'artefact.ilps'), get_string('cancel')),
             'goto' => get_config('wwwroot') . 'artefact/ilps/ilp.php?id=' . $parent,
         );
         $unitform = array(
             'name' => empty($unit) ? 'addunits' : 'editunit',
             'plugintype' => 'artefact',
             'pluginname' => 'unit',
-            'validatecallback' => array(generate_artefact_class_name('unit'),'validate'),
-            'successcallback' => array(generate_artefact_class_name('unit'),'submit'),
+            'validatecallback' => array(generate_artefact_class_name('unit'), 'validate'),
+            'successcallback' => array(generate_artefact_class_name('unit'), 'submit'),
             'elements' => $elements,
         );
 
@@ -424,37 +480,37 @@ class ArtefactTypeUnit extends ArtefactType {
     }
 
     /**
-    * Gets the new/edit fields for the units pieform
-    *
-    */
-    public static function get_unitform_elements($parent, $unit=null) {
+     * Gets the new/edit fields for the units pieform
+     *
+     */
+    public static function get_unitform_elements($parent, $unit = null) {
         $elements = array(
             'title' => array(
                 'type' => 'text',
                 'defaultvalue' => null,
                 'title' => get_string('unit', 'artefact.ilps'),
-                'description' => get_string('titledesc','artefact.ilps'),
+                'description' => get_string('titledesc', 'artefact.ilps'),
                 'size' => 30,
                 'rules' => array(
                     'required' => true,
                 ),
             ),
             'status' => array(
-                'type'  => 'text',
+                'type' => 'text',
                 'size' => 30,
                 'defaultvalue' => null,
                 'title' => get_string('status', 'artefact.ilps'),
-                'description' => get_string('statusdesc','artefact.ilps'),
+                'description' => get_string('statusdesc', 'artefact.ilps'),
                 'rules' => array(
                     'required' => true,
                 ),
             ),
             'targetcompletion' => array(
-                'type'       => 'calendar',
+                'type' => 'calendar',
                 'caloptions' => array(
-                    'showsTime'      => false,
-                    'ifFormat'       => '%Y/%m/%d'
-                    ),
+                    'showsTime' => false,
+                    'ifFormat' => '%Y/%m/%d'
+                ),
                 'defaultvalue' => null,
                 'title' => get_string('targetcompletion', 'artefact.ilps'),
                 'description' => get_string('dateformatguide'),
@@ -463,11 +519,11 @@ class ArtefactTypeUnit extends ArtefactType {
                 ),
             ),
             'datecompleted' => array(
-                'type'       => 'calendar',
+                'type' => 'calendar',
                 'caloptions' => array(
-                    'showsTime'      => false,
-                    'ifFormat'       => '%Y/%m/%d'
-                    ),
+                    'showsTime' => false,
+                    'ifFormat' => '%Y/%m/%d'
+                ),
                 'defaultvalue' => null,
                 'title' => get_string('datecompleted', 'artefact.ilps'),
                 'description' => get_string('dateformatguide'),
@@ -475,7 +531,6 @@ class ArtefactTypeUnit extends ArtefactType {
                     'required' => false,
                 ),
             ),
-            
             'points' => array(
                 'type' => 'text',
                 'size' => '7',
@@ -520,8 +575,7 @@ class ArtefactTypeUnit extends ArtefactType {
         if (!empty($values['unit'])) {
             $id = (int) $values['unit'];
             $artefact = new ArtefactTypeUnit($id);
-        }
-        else {
+        } else {
             $artefact = new ArtefactTypeunit();
             $artefact->set('owner', $USER->get('id'));
             $artefact->set('parent', $values['parent']);
@@ -536,7 +590,7 @@ class ArtefactTypeUnit extends ArtefactType {
 
         $SESSION->add_ok_msg(get_string('ilpsavedsuccessfully', 'artefact.ilps'));
 
-        redirect('/artefact/ilps/ilp.php?id='.$values['parent']);
+        redirect('/artefact/ilps/ilp.php?id=' . $values['parent']);
     }
 
     /**
@@ -547,22 +601,22 @@ class ArtefactTypeUnit extends ArtefactType {
      * @return array (grandtotalpoints: number, count: integer, data: array)
      * 
      */
-    public static function get_units($ilp, $offset=0, $limit=20) {
-       
+    public static function get_units($ilp, $offset = 0, $limit = 20) {
+
         ($results = get_records_sql_array("
-            SELECT a.id, at.artefact AS unit, at.status, at.points, ".db_format_tsfield('targetcompletion').", ".db_format_tsfield('datecompleted').",
+            SELECT a.id, at.artefact AS unit, at.status, at.points, " . db_format_tsfield('targetcompletion') . ", " . db_format_tsfield('datecompleted') . ",
                 a.title, a.description, a.parent
                 FROM {artefact} a
             JOIN {artefact_ilps_unit} at ON at.artefact = a.id
             WHERE a.artefacttype = 'unit' AND a.parent = ?
             ORDER BY at.targetcompletion DESC", array($ilp), $offset, $limit))
-            || ($results = array());
+                || ($results = array());
 
-        // format the date and calculate grand total of points spent
+        // format the date and calculate grand total of points
         $grandtotalpoints = 0;
         if (!empty($results)) {
             foreach ($results as $result) {
-            	 $grandtotalpoints = $grandtotalpoints + $result->points;
+                $grandtotalpoints = $grandtotalpoints + $result->points;
                 if (!empty($result->targetcompletion)) {
                     $result->targetcompletion = strftime(get_string('strftimedate'), $result->targetcompletion);
                     if (!empty($result->datecompleted)) {
@@ -574,11 +628,11 @@ class ArtefactTypeUnit extends ArtefactType {
 
         $result = array(
             'grandtotalpoints' => $grandtotalpoints,
-            'count'  => count_records('artefact', 'artefacttype', 'unit', 'parent', $ilp),
-            'data'   => $results,
+            'count' => count_records('artefact', 'artefacttype', 'unit', 'parent', $ilp),
+            'data' => $results,
             'offset' => $offset,
-            'limit'  => $limit,
-            'id'     => $ilp,
+            'limit' => $limit,
+            'id' => $ilp,
         );
 
         return $result;
@@ -592,11 +646,12 @@ class ArtefactTypeUnit extends ArtefactType {
     public function build_units_list_html(&$units) {
         $smarty = smarty_core();
         $smarty->assign_by_ref('units', $units);
+        $smarty->assign('ilppoints', ArtefactTypeilp::get_points($units['id']));
         $units['tablerows'] = $smarty->fetch('artefact:ilps:unitslist.tpl');
         $pagination = build_pagination(array(
             'id' => 'unitlist_pagination',
             'class' => 'center',
-            'url' => get_config('wwwroot') . 'artefact/ilps/ilp.php?id='.$units['id'],
+            'url' => get_config('wwwroot') . 'artefact/ilps/ilp.php?id=' . $units['id'],
             'jsonscript' => 'artefact/ilps/units.json.php',
             'datatable' => 'unitslist',
             'count' => $units['count'],
@@ -609,7 +664,7 @@ class ArtefactTypeUnit extends ArtefactType {
             'numbersincludefirstlast' => false,
             'resultcounttextsingular' => get_string('unit', 'artefact.ilps'),
             'resultcounttextplural' => get_string('units', 'artefact.ilps'),
-        ));
+                ));
         $units['pagination'] = $pagination['html'];
         $units['pagination_js'] = $pagination['javascript'];
     }
@@ -619,6 +674,7 @@ class ArtefactTypeUnit extends ArtefactType {
         $smarty = smarty_core();
         $smarty->assign_by_ref('units', $units);
         $smarty->assign_by_ref('options', $options);
+    
         $units['tablerows'] = $smarty->fetch($template);
 
         if ($units['limit'] && $pagination) {
@@ -634,11 +690,12 @@ class ArtefactTypeUnit extends ArtefactType {
                 'numbersincludefirstlast' => false,
                 'resultcounttextsingular' => get_string('unit', 'artefact.ilps'),
                 'resultcounttextplural' => get_string('units', 'artefact.ilps'),
-            ));
+                    ));
             $units['pagination'] = $pagination['html'];
             $units['pagination_js'] = $pagination['javascript'];
         }
     }
+
 }
 
 ?>

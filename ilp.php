@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mahara: Electronic portfolio, weblog, resume builder and social networking
  * Copyright (C) 2006-2009 Catalyst IT Ltd and others; see:
@@ -24,8 +25,6 @@
  * @copyright  (C) 2012 Ross Dash
  *
  */
-
-
 define('INTERNAL', 1);
 define('MENUITEM', 'content/ilps');
 define('SECTION_PLUGINTYPE', 'artefact');
@@ -35,22 +34,22 @@ define('SECTION_PAGE', 'ilps');
 require(dirname(dirname(dirname(__FILE__))) . '/init.php');
 safe_require('artefact', 'ilps');
 
-define('TITLE', get_string('units','artefact.ilps'));
+define('TITLE', get_string('units', 'artefact.ilps'));
 
 $id = param_integer('id');
 
 // offset and limit for pagination
 $offset = param_integer('offset', 0);
-$limit  = param_integer('limit', 20);
+$limit = param_integer('limit', 20);
 
-$ilp = new ArtefactTypeIlp($id);
+$ilp = new ArtefactTypeilp($id);
 if (!$USER->can_edit_artefact($ilp)) {
     throw new AccessDeniedException(get_string('accessdenied', 'error'));
 }
 
-
 $units = ArtefactTypeUnit::get_units($ilp->get('id'), $offset, $limit);
 ArtefactTypeUnit::build_units_list_html($units);
+
 
 $js = <<< EOF
 addLoadEvent(function () {
@@ -61,11 +60,8 @@ EOF;
 $smarty = smarty(array('paginator'));
 $smarty->assign_by_ref('units', $units);
 $smarty->assign_by_ref('ilp', $id);
-$smarty->assign('strnounitsaddone',
-    get_string('nounitsaddone', 'artefact.ilps',
-    '<a href="' . get_config('wwwroot') . 'artefact/ilps/new.php?id='.$ilp->get('id').'">', '</a>'));
-$smarty->assign('PAGEHEADING', get_string("ilpsunits", "artefact.ilps",$ilp->get('title')));
+$smarty->assign('strnounitsaddone', get_string('nounitsaddone', 'artefact.ilps', '<a href="' . get_config('wwwroot') . 'artefact/ilps/new.php?id=' . $ilp->get('id') . '">', '</a>'));
+$smarty->assign('PAGEHEADING', get_string("ilpsunits", "artefact.ilps", $ilp->get('title')));
 $smarty->assign('INLINEJAVASCRIPT', $js);
 $smarty->display('artefact:ilps:ilp.tpl');
-
 ?>

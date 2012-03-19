@@ -29,7 +29,7 @@ defined('INTERNAL') || die();
 
 function xmldb_artefact_ilps_upgrade($oldversion=0) {
 
-    if ($oldversion < 2011051501) {
+    if ($oldversion < 2012160300) {
         set_field('artefact', 'container', 1, 'artefacttype', 'ilp');
     }
 
