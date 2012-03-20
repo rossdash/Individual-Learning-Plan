@@ -74,10 +74,11 @@ class ArtefactTypeilp extends ArtefactType {
         }
     }
 
-     public static function get_points($id) {
-         $points = get_field('artefact_ilps_points', 'points', 'artefact', $id);
+    public static function get_points($id) {
+        $points = get_field('artefact_ilps_points', 'points', 'artefact', $id);
         return $points;
     }
+
     public static function get_links($id) {
         return array();
     }
@@ -122,7 +123,7 @@ class ArtefactTypeilp extends ArtefactType {
 
         db_begin();
         delete_records('artefact_ilps_points', 'artefact', $this->id);
-        
+
         parent::delete();
         db_commit();
     }
@@ -674,7 +675,7 @@ class ArtefactTypeUnit extends ArtefactType {
         $smarty = smarty_core();
         $smarty->assign_by_ref('units', $units);
         $smarty->assign_by_ref('options', $options);
-    
+        $smarty->assign('ilppoints', ArtefactTypeilp::get_points($units['id']));
         $units['tablerows'] = $smarty->fetch($template);
 
         if ($units['limit'] && $pagination) {

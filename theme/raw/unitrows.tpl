@@ -24,5 +24,5 @@
 <th colspan="4" class="right">{str tag='acquiredpoints' section='artefact.ilps'}</th><td class="right aquiredpoints">{$acquiredpoints}</td><td></td>
 </tr>
 <tr class="feedbackpoints">
-<th colspan="4" class="right">{str tag='remainingpoints' section='artefact.ilps'}</th><td class="right remainingpoints">{math equation="t - a" t=$totalpoints a=$acquiredpoints}</td><td></td>
+<th colspan="4" class="right">{str tag='remainingpoints' section='artefact.ilps'}</th><td class="right remainingpoints">{math equation="t - a" t=$ilppoints a=$acquiredpoints}</td><td></td>
 </tr>
