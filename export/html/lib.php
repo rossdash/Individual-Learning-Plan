@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mahara: Electronic portfolio, weblog, resume builder and social networking
  * Copyright (C) 2006-2009 Catalyst IT Ltd and others; see:
@@ -32,9 +33,9 @@ class HtmlExportilps extends HtmlExportArtefactPlugin {
     public function pagination_data($artefact) {
         if ($artefact instanceof ArtefactTypeilp) {
             return array(
-                'perpage'    => 10,
+                'perpage' => 10,
                 'childcount' => $artefact->count_children(),
-                'plural'     => get_string('ilps', 'artefact.ilps'),
+                'plural' => get_string('ilps', 'artefact.ilps'),
             );
         }
     }
@@ -69,4 +70,5 @@ class HtmlExportilps extends HtmlExportArtefactPlugin {
     public function get_summary_weight() {
         return 40;
     }
+
 }

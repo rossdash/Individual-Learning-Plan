@@ -1,38 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <XMLDB PATH="artefact/ilps/db" VERSION="20110515" COMMENT="XMLDB file for MyILPs Artefact Mahara tables"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaStatus="../../lib/xmldb/xmldb.xsd"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaStatus="../../lib/xmldb/xmldb.xsd"
 >
-<TABLES>
+    <TABLES>
 
     <!-- This table is supposed to have a 1-1 relation with every row in the
     artefact table with artefacttype = 'unit'.  It contains additional data
     that isn't in the artefact table. -->
-    <TABLE NAME="artefact_ilps_unit">
-        <FIELDS>
-            <FIELD NAME="artefact" TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" />
-            <FIELD NAME="status" TYPE="text" NOTNULL="false" />
-            <FIELD NAME="targetcompletion" TYPE="datetime" NOTNULL="false" />
-            <FIELD NAME="datecompleted" TYPE="datetime" NOTNULL="false" />
-            <FIELD NAME="points" TYPE="number" LENGTH="2" DECIMALS="0" NOTNULL="true" DEFAULT="0" />
-        </FIELDS>
-        <KEYS>
-            <KEY NAME="primary" TYPE="primary" FIELDS="artefact" />
-            <KEY NAME="artefactfk" TYPE="foreign" FIELDS="artefact" REFTABLE="artefact" REFFIELDS="id" />
-        </KEYS>
-    </TABLE>
+        <TABLE NAME="artefact_ilps_unit">
+            <FIELDS>
+                <FIELD NAME="artefact" TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" />
+                <FIELD NAME="status" TYPE="text" NOTNULL="false" />
+                <FIELD NAME="targetcompletion" TYPE="datetime" NOTNULL="false" />
+                <FIELD NAME="datecompleted" TYPE="datetime" NOTNULL="false" />
+                <FIELD NAME="points" TYPE="number" LENGTH="2" DECIMALS="0" NOTNULL="true" DEFAULT="0" />
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="artefact" />
+                <KEY NAME="artefactfk" TYPE="foreign" FIELDS="artefact" REFTABLE="artefact" REFFIELDS="id" />
+            </KEYS>
+        </TABLE>
 
 
-<TABLE NAME="artefact_ilps_points">
-        <FIELDS>
-            <FIELD NAME="artefact" TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" />
-            <FIELD NAME="points" TYPE="number" LENGTH="3" DECIMALS="0" NOTNULL="true" DEFAULT="0" />
-        </FIELDS>
-        <KEYS>
-            <KEY NAME="primary" TYPE="primary" FIELDS="artefact" />
-            <KEY NAME="artefactfk" TYPE="foreign" FIELDS="artefact" REFTABLE="artefact" REFFIELDS="id" />
-        </KEYS>
-    </TABLE>
+        <TABLE NAME="artefact_ilps_points">
+            <FIELDS>
+                <FIELD NAME="artefact" TYPE="int" LENGTH="10" SEQUENCE="true" NOTNULL="true" />
+                <FIELD NAME="points" TYPE="number" LENGTH="3" DECIMALS="0" NOTNULL="true" DEFAULT="0" />
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="artefact" />
+                <KEY NAME="artefactfk" TYPE="foreign" FIELDS="artefact" REFTABLE="artefact" REFFIELDS="id" />
+            </KEYS>
+        </TABLE>
     
-</TABLES>
+    </TABLES>
 </XMLDB>

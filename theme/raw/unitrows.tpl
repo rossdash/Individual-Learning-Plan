@@ -8,21 +8,21 @@
         <td class="c4">{$unit->datecompleted}</td>
         <td class="c5 right">{$unit->points}</td>
     </tr>
-    
-{if $unit->datecompleted !=''}
-{$acquiredpoints = $acquiredpoints + $unit->points}
-{/if}
-    
-{$totalpoints = $totalpoints + $unit->points}
+
+    {if $unit->datecompleted !=''}
+        {$acquiredpoints = $acquiredpoints + $unit->points}
+    {/if}
+
+    {$totalpoints = $totalpoints + $unit->points}
 {/foreach}
 <tr></tr>
 <tr class="summarypoints">
-<th colspan="4" class="right">{str tag='totalpoints' section='artefact.ilps'}</th><td class="right totalpoints">{$totalpoints}</td><td></td>
+    <th colspan="4" class="right">{str tag='totalpoints' section='artefact.ilps'}</th><td class="right totalpoints">{$totalpoints}</td><td></td>
 </tr>
 <tr><td></td></tr><tr><td></td></tr>
 <tr class="feedbackpoints">
-<th colspan="4" class="right">{str tag='acquiredpoints' section='artefact.ilps'}</th><td class="right aquiredpoints">{$acquiredpoints}</td><td></td>
+    <th colspan="4" class="right">{str tag='acquiredpoints' section='artefact.ilps'}</th><td class="right aquiredpoints">{$acquiredpoints}</td><td></td>
 </tr>
 <tr class="feedbackpoints">
-<th colspan="4" class="right">{str tag='remainingpoints' section='artefact.ilps'}</th><td class="right remainingpoints">{math equation="t - a" t=$ilppoints a=$acquiredpoints}</td><td></td>
+    <th colspan="4" class="right">{str tag='remainingpoints' section='artefact.ilps'}</th><td class="right remainingpoints">{math equation="t - a" t=$ilppoints a=$acquiredpoints}</td><td></td>
 </tr>

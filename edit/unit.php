@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mahara: Electronic portfolio, weblog, resume builder and social networking
  * Copyright (C) 2006-2009 Catalyst IT Ltd and others; see:
@@ -32,9 +33,9 @@ require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/init.php');
 require_once('pieforms/pieform.php');
 require_once('pieforms/pieform/elements/calendar.php');
 require_once(get_config('docroot') . 'artefact/lib.php');
-safe_require('artefact','ilps');
+safe_require('artefact', 'ilps');
 
-define('TITLE', get_string('editunit','artefact.ilps'));
+define('TITLE', get_string('editunit', 'artefact.ilps'));
 
 $id = param_integer('id');
 $unit = new ArtefactTypeUnit($id);
@@ -48,5 +49,4 @@ $smarty = smarty();
 $smarty->assign('editform', $form);
 $smarty->assign('PAGEHEADING', hsc(get_string("editingunit", "artefact.ilps")));
 $smarty->display('artefact:ilps:edit.tpl');
-
 ?>

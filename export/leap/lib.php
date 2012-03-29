@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mahara: Electronic portfolio, weblog, resume builder and social networking
  * Copyright (C) 2006-2009 Catalyst IT Ltd and others; see:
@@ -36,6 +37,7 @@ class LeapExportElementilp extends LeapExportElement {
     public function get_template_path() {
         return 'export:leap/ilps:ilp.tpl';
     }
+
 }
 
 class LeapExportElementunit extends LeapExportElementilp {
@@ -49,10 +51,11 @@ class LeapExportElementunit extends LeapExportElementilp {
         return array(
             array(
                 'point' => 'target',
-                'date'  => format_date($this->artefact->get('targetcompletion'), 'strftimew3cdate'),
+                'date' => format_date($this->artefact->get('targetcompletion'), 'strftimew3cdate'),
             ),
         );
     }
+
 }
 
 ?>

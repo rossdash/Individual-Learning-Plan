@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mahara: Electronic portfolio, weblog, resume builder and social networking
  * Copyright (C) 2006-2009 Catalyst IT Ltd and others; see:
@@ -44,13 +45,12 @@ if ($blockid = param_integer('block', null)) {
 
     $template = 'artefact:ilps:unitrows.tpl';
     $pagination = array(
-        'baseurl'   => $bi->get_view()->get_url() . '&block=' . $blockid,
-        'id'        => 'block' . $blockid . '_pagination',
+        'baseurl' => $bi->get_view()->get_url() . '&block=' . $blockid,
+        'id' => 'block' . $blockid . '_pagination',
         'datatable' => 'unittable_' . $blockid,
         'jsonscript' => 'artefact/ilps/viewunits.json.php',
     );
-}
-else {
+} else {
     $ilpid = param_integer('artefact');
     $viewid = param_integer('view');
     $options = array('viewid' => $viewid);
@@ -64,8 +64,9 @@ else {
         'datatable' => 'unitlist',
         'jsonscript' => 'artefact/ilps/viewunits.json.php',
     );
-
 }
 ArtefactTypeUnit::render_units($units, $template, $options, $pagination);
 
 json_reply(false, (object) array('message' => false, 'data' => $units));
+
+

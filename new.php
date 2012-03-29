@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mahara: Electronic portfolio, weblog, resume builder and social networking
  * Copyright (C) 2006-2009 Catalyst IT Ltd and others; see:
@@ -33,23 +34,21 @@ define('SECTION_PLUGINNAME', 'ilps');
 require(dirname(dirname(dirname(__FILE__))) . '/init.php');
 safe_require('artefact', 'ilps');
 
-$id = param_integer('id',0);
+$id = param_integer('id', 0);
 if ($id) {
     $ilp = new ArtefactTypeIlp($id);
     if (!$USER->can_edit_artefact($ilp)) {
         throw new AccessDeniedException(get_string('accessdenied', 'error'));
     }
-    define('TITLE', get_string('newunit','artefact.ilps'));
+    define('TITLE', get_string('newunit', 'artefact.ilps'));
     $form = ArtefactTypeUnit::get_form($id);
-}
-else {
-    define('TITLE', get_string('newilp','artefact.ilps'));
+} else {
+    define('TITLE', get_string('newilp', 'artefact.ilps'));
     $form = ArtefactTypeIlp::get_form();
 }
 
-$smarty =& smarty();
+$smarty = & smarty();
 $smarty->assign_by_ref('form', $form);
 $smarty->assign_by_ref('PAGEHEADING', hsc(TITLE));
 $smarty->display('artefact:ilps:new.tpl');
-
 ?>

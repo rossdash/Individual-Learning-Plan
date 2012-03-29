@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mahara: Electronic portfolio, weblog, resume builder and social networking
  * Copyright (C) 2006-2009 Catalyst IT Ltd and others; see:
@@ -35,7 +36,6 @@ defined('INTERNAL') || die();
  * that are not part of another ilp, use those for the top level, with
  * everything else crammed in at the second level.
  */
-
 class LeapImportilps extends LeapImportArtefactPlugin {
 
     const STRATEGY_IMPORT_AS_ilp = 1;
@@ -49,10 +49,10 @@ class LeapImportilps extends LeapImportArtefactPlugin {
 
         // Mahara can't handle html ilps yet, so don't claim to be able to import them.
         if (PluginImportLeap::is_rdf_type($entry, $importer, 'ilp')
-            && (empty($entry->content['type']) || (string)$entry->content['type'] == 'text')) {
+                && (empty($entry->content['type']) || (string) $entry->content['type'] == 'text')) {
             $strategies[] = array(
                 'strategy' => self::STRATEGY_IMPORT_AS_ilp,
-                'score'    => 90,
+                'score' => 90,
                 'other_required_entries' => array(),
             );
         }
@@ -67,7 +67,7 @@ class LeapImportilps extends LeapImportArtefactPlugin {
         }
 
         $artefactmapping = array();
-        $artefactmapping[(string)$entry->id] = self::create_ilp($entry, $importer);
+        $artefactmapping[(string) $entry->id] = self::create_ilp($entry, $importer);
         return $artefactmapping;
     }
 
@@ -75,23 +75,23 @@ class LeapImportilps extends LeapImportArtefactPlugin {
      * Get the id of the ilp entry which ultimately contains this entry
      */
     public static function get_ancestor_entryid(SimpleXMLElement $entry, PluginImportLeap $importer) {
-        $entryid = (string)$entry->id;
+        $entryid = (string) $entry->id;
 
         if (!isset(self::$ancestors[$entryid])) {
             self::$ancestors[$entryid] = null;
             $child = $entry;
 
             while ($child) {
-                $childid = (string)$child->id;
+                $childid = (string) $child->id;
 
                 if (!isset(self::$parents[$childid])) {
                     self::$parents[$childid] = null;
 
                     foreach ($child->link as $link) {
-                        $href = (string)$link['href'];
+                        $href = (string) $link['href'];
                         if ($href != $entryid
-                            && $importer->curie_equals($link['rel'], PluginImportLeap::NS_LEAP, 'is_part_of')
-                            && $importer->entry_has_strategy($href, self::STRATEGY_IMPORT_AS_ilp, 'ilps')) {
+                                && $importer->curie_equals($link['rel'], PluginImportLeap::NS_LEAP, 'is_part_of')
+                                && $importer->entry_has_strategy($href, self::STRATEGY_IMPORT_AS_ilp, 'ilps')) {
                             self::$parents[$childid] = $href;
                             break;
                         }
@@ -110,7 +110,6 @@ class LeapImportilps extends LeapImportArtefactPlugin {
         return self::$ancestors[$entryid];
     }
 
-
     /**
      * Creates a ilp or unit from the given entry
      *
@@ -125,24 +124,22 @@ class LeapImportilps extends LeapImportArtefactPlugin {
 
         if (self::get_ancestor_entryid($entry, $importer)) {
             $artefact = new ArtefactTypeunit();
-        }
-        else {
+        } else {
             $artefact = new ArtefactTypeilp();
         }
 
-        $artefact->set('title', (string)$entry->title);
+        $artefact->set('title', (string) $entry->title);
         $artefact->set('description', PluginImportLeap::get_entry_content($entry, $importer));
         $artefact->set('owner', $importer->get('usr'));
         if (isset($entry->author->name) && strlen($entry->author->name)) {
             $artefact->set('authorname', $entry->author->name);
-        }
-        else {
+        } else {
             $artefact->set('author', $importer->get('usr'));
         }
-        if ($published = strtotime((string)$entry->published)) {
+        if ($published = strtotime((string) $entry->published)) {
             $artefact->set('ctime', $published);
         }
-        if ($updated = strtotime((string)$entry->updated)) {
+        if ($updated = strtotime((string) $entry->updated)) {
             $artefact->set('mtime', $updated);
         }
 
@@ -176,9 +173,9 @@ class LeapImportilps extends LeapImportArtefactPlugin {
     public static function setup_relationships(SimpleXMLElement $entry, PluginImportLeap $importer) {
         if ($ancestorid = self::get_ancestor_entryid($entry, $importer)) {
             $ancestorids = $importer->get_artefactids_imported_by_entryid($ancestorid);
-            $artefactids = $importer->get_artefactids_imported_by_entryid((string)$entry->id);
+            $artefactids = $importer->get_artefactids_imported_by_entryid((string) $entry->id);
             if (empty($artefactids[0])) {
-                throw new ImportException($importer, 'unit artefact not found: ' . (string)$entry->id);
+                throw new ImportException($importer, 'unit artefact not found: ' . (string) $entry->id);
             }
             if (empty($ancestorids[0])) {
                 throw new ImportException($importer, 'ilp artefact not found: ' . $ancestorid);

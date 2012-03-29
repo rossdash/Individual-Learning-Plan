@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mahara: Electronic portfolio, weblog, resume builder and social networking
  * Copyright (C) 2006-2009 Catalyst IT Ltd and others; see:
@@ -41,7 +42,7 @@ class PluginBlocktypeIlps extends PluginBlocktype {
         return array('general');
     }
 
-     /**
+    /**
      * Optional method. If exists, allows this class to decide the title for
      * all blockinstances of this type
      */
@@ -49,7 +50,7 @@ class PluginBlocktypeIlps extends PluginBlocktype {
         $configdata = $bi->get('configdata');
 
         if (!empty($configdata['artefactid'])) {
-            safe_require('artefact','ilps');
+            safe_require('artefact', 'ilps');
             $ilp = new ArtefactTypeilp($configdata['artefactid']);
             $title = $ilp->get('title');
             return $title;
@@ -57,11 +58,11 @@ class PluginBlocktypeIlps extends PluginBlocktype {
         return '';
     }
 
-    public static function render_instance(BlockInstance $instance, $editing=false) {
+    public static function render_instance(BlockInstance $instance, $editing = false) {
         global $exporter;
 
         require_once(get_config('docroot') . 'artefact/lib.php');
-        safe_require('artefact','ilps');
+        safe_require('artefact', 'ilps');
 
         $configdata = $instance->get('configdata');
 
@@ -72,11 +73,10 @@ class PluginBlocktypeIlps extends PluginBlocktype {
             $blockid = $instance->get('id');
             if ($exporter) {
                 $pagination = false;
-            }
-            else {
+            } else {
                 $pagination = array(
-                    'baseurl'   => $instance->get_view()->get_url() . '&block=' . $blockid,
-                    'id'        => 'block' . $blockid . '_pagination',
+                    'baseurl' => $instance->get_view()->get_url() . '&block=' . $blockid,
+                    'id' => 'block' . $blockid . '_pagination',
                     'datatable' => 'unittable_' . $blockid,
                     'jsonscript' => 'artefact/ilps/viewunits.json.php',
                 );
@@ -85,13 +85,12 @@ class PluginBlocktypeIlps extends PluginBlocktype {
 
             if ($exporter && $units['count'] > $units['limit']) {
                 $artefacturl = get_config('wwwroot') . 'view/artefact.php?artefact=' . $configdata['artefactid']
-                    . '&amp;view=' . $instance->get('view');
+                        . '&amp;view=' . $instance->get('view');
                 $units['pagination'] = '<a href="' . $artefacturl . '">' . get_string('allunits', 'artefact.ilps') . '</a>';
             }
-            $smarty->assign('units',$units);
-        }
-        else {
-            $smarty->assign('noilps','blocktype.ilps/ilps');
+            $smarty->assign('units', $units);
+        } else {
+            $smarty->assign('noilps', 'blocktype.ilps/ilps');
         }
         $smarty->assign('blockid', $instance->get('id'));
         return $smarty->fetch('blocktype:ilps:content.tpl');
@@ -113,23 +112,24 @@ class PluginBlocktypeIlps extends PluginBlocktype {
         return $form;
     }
 
-    public static function artefactchooser_element($default=null) {
+    public static function artefactchooser_element($default = null) {
         safe_require('artefact', 'ilps');
         return array(
-            'name'  => 'artefactid',
-            'type'  => 'artefactchooser',
+            'name' => 'artefactid',
+            'type' => 'artefactchooser',
             'title' => get_string('ilpstoshow', 'blocktype.ilps/ilps'),
             'defaultvalue' => $default,
             'blocktype' => 'ilps',
             'selectone' => true,
-            'search'    => false,
+            'search' => false,
             'artefacttypes' => array('ilp'),
-            'template'  => 'artefact:ilps:artefactchooser-element.tpl',
+            'template' => 'artefact:ilps:artefactchooser-element.tpl',
         );
     }
 
     public static function allowed_in_view(View $view) {
         return $view->get('owner') != null;
     }
+
 }
 

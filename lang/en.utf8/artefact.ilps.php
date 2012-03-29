@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mahara: Electronic portfolio, weblog, resume builder and social networking
  * Copyright (C) 2006-2008 Catalyst IT Ltd (http://www.catalyst.net.nz)
@@ -76,5 +77,4 @@ $string['unitdeletedsuccessfully'] = 'unit deleted successfully.';
 $string['unitsavedsuccessfully'] = 'unit saved successfully.';
 $string['status'] = 'Status';
 $string['statusdesc'] = 'The status of the ILP unit.';
-
 ?>

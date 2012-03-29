@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mahara: Electronic portfolio, weblog, resume builder and social networking
  * Copyright (C) 2006-2009 Catalyst IT Ltd and others; see:
@@ -30,9 +31,9 @@ define('MENUITEM', 'content/ilps');
 
 require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/init.php');
 require_once('pieforms/pieform.php');
-safe_require('artefact','ilps');
+safe_require('artefact', 'ilps');
 
-define('TITLE', get_string('deleteilp','artefact.ilps'));
+define('TITLE', get_string('deleteilp', 'artefact.ilps'));
 
 $id = param_integer('id');
 $todelete = new ArtefactTypeIlp($id);
@@ -48,7 +49,7 @@ $deleteform = array(
     'elements' => array(
         'submit' => array(
             'type' => 'submitcancel',
-            'value' => array(get_string('deleteilp','artefact.ilps'), get_string('cancel')),
+            'value' => array(get_string('deleteilp', 'artefact.ilps'), get_string('cancel')),
             'goto' => get_config('wwwroot') . '/artefact/ilps/',
         ),
     )
@@ -58,8 +59,8 @@ $form = pieform($deleteform);
 $smarty = smarty();
 $smarty->assign('form', $form);
 $smarty->assign('PAGEHEADING', $todelete->get('title'));
-$smarty->assign('subheading', get_string('deletethisilp','artefact.ilps',$todelete->get('title')));
-$smarty->assign('message', get_string('deleteilpconfirm','artefact.ilps'));
+$smarty->assign('subheading', get_string('deletethisilp', 'artefact.ilps', $todelete->get('title')));
+$smarty->assign('message', get_string('deleteilpconfirm', 'artefact.ilps'));
 $smarty->display('artefact:ilps:delete.tpl');
 
 // calls this function first so that we can get the artefact and call delete on it

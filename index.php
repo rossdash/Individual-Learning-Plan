@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mahara: Electronic portfolio, weblog, resume builder and social networking
  * Copyright (C) 2006-2009 Catalyst IT Ltd and others; see:
@@ -24,16 +25,10 @@
  * @copyright  (C) 2012 Ross Dash
  *
  */
-
-
 define('INTERNAL', 1);
-//require(get_config('docroot') . 'lib/version.php');
-//$release = $config->release;
-//if ($release < 1.4) {
-// define('MENUITEM', 'myportfolio/ilps');
-//} else {
-      define('MENUITEM', 'content/ilps');
-//}
+
+define('MENUITEM', 'content/ilps');
+
 define('SECTION_PLUGINTYPE', 'artefact');
 define('SECTION_PLUGINNAME', 'ilps');
 define('SECTION_PAGE', 'index');
@@ -41,11 +36,11 @@ define('SECTION_PAGE', 'index');
 require(dirname(dirname(dirname(__FILE__))) . '/init.php');
 safe_require('artefact', 'ilps');
 
-define('TITLE', get_string('myilps','artefact.ilps'));
+define('TITLE', get_string('myilps', 'artefact.ilps'));
 
 // offset and limit for pagination
 $offset = param_integer('offset', 0);
-$limit  = param_integer('limit', 20);
+$limit = param_integer('limit', 20);
 
 $ilps = ArtefactTypeIlp::get_ilps($offset, $limit);
 ArtefactTypeIlp::build_ilps_list_html($ilps);
@@ -58,11 +53,8 @@ EOF;
 
 $smarty = smarty(array('paginator'));
 $smarty->assign_by_ref('ilps', $ilps);
-$smarty->assign('strnoilpsaddone',
-    get_string('noilpsaddone', 'artefact.ilps',
-    '<a href="' . get_config('wwwroot') . 'artefact/ilps/new.php">', '</a>'));
+$smarty->assign('strnoilpsaddone', get_string('noilpsaddone', 'artefact.ilps', '<a href="' . get_config('wwwroot') . 'artefact/ilps/new.php">', '</a>'));
 $smarty->assign('PAGEHEADING', hsc(get_string("myilps", "artefact.ilps")));
 $smarty->assign('INLINEJAVASCRIPT', $js);
 $smarty->display('artefact:ilps:index.tpl');
-
 ?>

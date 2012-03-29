@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mahara: Electronic portfolio, weblog, resume builder and social networking
  * Copyright (C) 2006-2008 Catalyst IT Ltd (http://www.catalyst.net.nz)
@@ -29,5 +30,4 @@ defined('INTERNAL') || die();
 $config = new StdClass;
 $config->version = 2012160300;
 $config->release = '0.0.4';
-
 ?>

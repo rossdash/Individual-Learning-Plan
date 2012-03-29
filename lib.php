@@ -74,6 +74,10 @@ class ArtefactTypeilp extends ArtefactType {
         }
     }
 
+    /**
+     * This function returns the points assigned to the ILP.
+     * 
+     */
     public static function get_points($id) {
         $points = get_field('artefact_ilps_points', 'points', 'artefact', $id);
         return $points;

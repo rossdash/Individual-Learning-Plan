@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mahara: Electronic portfolio, weblog, resume builder and social networking
  * Copyright (C) 2006-2009 Catalyst IT Ltd and others; see:
@@ -27,7 +28,7 @@
 
 defined('INTERNAL') || die();
 
-function xmldb_artefact_ilps_upgrade($oldversion=0) {
+function xmldb_artefact_ilps_upgrade($oldversion = 0) {
 
     if ($oldversion < 2012160300) {
         set_field('artefact', 'container', 1, 'artefacttype', 'ilp');
