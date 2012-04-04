@@ -156,6 +156,7 @@ class ArtefactTypeilp extends ArtefactType {
             WHERE artefacttype = 'ilp' AND owner = ?
             ORDER BY id", array($USER->get('id')), $offset, $limit))
                 || ($ilps = array());
+
         $result = array(
             'count' => count_records('artefact', 'owner', $USER->get('id'), 'artefacttype', 'ilp'),
             'data' => $ilps,
@@ -619,20 +620,30 @@ class ArtefactTypeUnit extends ArtefactType {
 
         // format the date and calculate grand total of points
         $grandtotalpoints = 0;
-        if (!empty($results)) {
-            foreach ($results as $result) {
-                $grandtotalpoints = $grandtotalpoints + $result->points;
-                if (!empty($result->targetcompletion)) {
-                    $result->targetcompletion = strftime(get_string('strftimedate'), $result->targetcompletion);
-                    if (!empty($result->datecompleted)) {
-                        $result->datecompleted = strftime(get_string('strftimedate'), $result->datecompleted);
-                    }
-                }
+        $aquiredpoints = 0;
+        $remainingpoints = ArtefactTypeilp::get_points($ilp);
+
+
+        foreach ($results as $result) {
+
+            $grandtotalpoints = $grandtotalpoints + $result->points;
+
+            if (!empty($result->targetcompletion)) {
+                $result->targetcompletion = strftime(get_string('strftimedate'), $result->targetcompletion);
+            }
+
+            if (!empty($result->datecompleted)) {
+                $result->datecompleted = strftime(get_string('strftimedate'), $result->datecompleted);
+                $aquiredpoints = $aquiredpoints + $result->points;
+                $remainingpoints = $remainingpoints - $result->points;
             }
         }
 
+
         $result = array(
             'grandtotalpoints' => $grandtotalpoints,
+            'aquiredpoints' => $aquiredpoints,
+            'remainingpoints' => $remainingpoints,
             'count' => count_records('artefact', 'artefacttype', 'unit', 'parent', $ilp),
             'data' => $results,
             'offset' => $offset,
@@ -651,7 +662,6 @@ class ArtefactTypeUnit extends ArtefactType {
     public function build_units_list_html(&$units) {
         $smarty = smarty_core();
         $smarty->assign_by_ref('units', $units);
-        $smarty->assign('ilppoints', ArtefactTypeilp::get_points($units['id']));
         $units['tablerows'] = $smarty->fetch('artefact:ilps:unitslist.tpl');
         $pagination = build_pagination(array(
             'id' => 'unitlist_pagination',
@@ -679,7 +689,6 @@ class ArtefactTypeUnit extends ArtefactType {
         $smarty = smarty_core();
         $smarty->assign_by_ref('units', $units);
         $smarty->assign_by_ref('options', $options);
-        $smarty->assign('ilppoints', ArtefactTypeilp::get_points($units['id']));
         $units['tablerows'] = $smarty->fetch($template);
 
         if ($units['limit'] && $pagination) {
