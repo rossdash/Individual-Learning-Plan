@@ -282,6 +282,7 @@ class ArtefactTypeilp extends ArtefactType {
                 'size' => 3,
                 'rules' => array(
                     'required' => true,
+                    'integer' => true,
                 ),
             ),
             'description' => array(
@@ -543,6 +544,9 @@ class ArtefactTypeUnit extends ArtefactType {
                 'defaultvalue' => '0',
                 'title' => get_string('points', 'artefact.ilps'),
                 'description' => get_string('pointsdesc', 'artefact.ilps'),
+                'rules' => array(
+                    'integer' => true,
+                ),
             ),
         );
 
