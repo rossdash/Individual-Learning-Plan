@@ -599,6 +599,47 @@ class ArtefactTypeUnit extends ArtefactType {
         redirect('/artefact/ilps/ilp.php?id=' . $values['parent']);
     }
 
+    public static function get_summarypoints($ilp) {
+        ($results = get_records_sql_array("
+            SELECT a.id, at.artefact AS unit, at.status, at.points, " . db_format_tsfield('targetcompletion') . ", " . db_format_tsfield('datecompleted') . ",
+                a.title, a.description, a.parent
+                FROM {artefact} a
+            JOIN {artefact_ilps_unit} at ON at.artefact = a.id
+            WHERE a.artefacttype = 'unit' AND a.parent = ?
+            ORDER BY at.targetcompletion DESC", array($ilp)))
+                || ($results = array());
+
+        // format the date and calculate grand total of points
+        $grandtotalpoints = 0;
+        $aquiredpoints = 0;
+        $remainingpoints = ArtefactTypeilp::get_points($ilp);
+
+
+        foreach ($results as $result) {
+
+            $grandtotalpoints = $grandtotalpoints + $result->points;
+
+            if (!empty($result->targetcompletion)) {
+                $result->targetcompletion = strftime(get_string('strftimedate'), $result->targetcompletion);
+            }
+
+            if (!empty($result->datecompleted)) {
+                $result->datecompleted = strftime(get_string('strftimedate'), $result->datecompleted);
+                $aquiredpoints = $aquiredpoints + $result->points;
+                $remainingpoints = $remainingpoints - $result->points;
+            }
+        }
+
+
+        $result = array(
+            'grandtotalpoints' => $grandtotalpoints,
+            'aquiredpoints' => $aquiredpoints,
+            'remainingpoints' => $remainingpoints,
+        );
+
+        return $result;
+    }
+
     /**
      * This function returns a list of the current ilps units.
      *
@@ -660,8 +701,10 @@ class ArtefactTypeUnit extends ArtefactType {
      * @param units (reference)
      */
     public function build_units_list_html(&$units) {
+        $summarypoints = ArtefactTypeUnit::get_summarypoints($units['id']);
         $smarty = smarty_core();
         $smarty->assign_by_ref('units', $units);
+        $smarty->assign_by_ref('summarypoints', $summarypoints);
         $units['tablerows'] = $smarty->fetch('artefact:ilps:unitslist.tpl');
         $pagination = build_pagination(array(
             'id' => 'unitlist_pagination',
