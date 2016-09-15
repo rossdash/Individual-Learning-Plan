@@ -10,12 +10,11 @@
 {/foreach}
 <tr></tr>
 <tr class="summarypoints">
-    <th colspan="4" class="right">{str tag='totalpoints' section='artefact.ilps'}</th><td class="right totalpoints">{$units.grandtotalpoints}</td><td></td>
-</tr>
-<tr><td></td></tr><tr><td></td></tr>
-<tr class="feedbackpoints">
-    <th colspan="4" class="right">{str tag='acquiredpoints' section='artefact.ilps'}</th><td class="right aquiredpoints">{$units.acquiredpoints}</td><td></td>
+    <th colspan="4" class="right">{str tag='totalpoints' section='artefact.ilps'}</th><td class="right totalpoints">{$units.grandtotalpoints}</td>
 </tr>
 <tr class="feedbackpoints">
-    <th colspan="4" class="right">{str tag='remainingpoints' section='artefact.ilps'}</th><td class="right remainingpoints">{$units.remainingpoints}</td><td></td>
+    <th colspan="4" class="right">{str tag='acquiredpoints' section='artefact.ilps'}</th><td class="right aquiredpoints">{$units.acquiredpoints}</td>
+</tr>
+<tr class="feedbackpoints">
+    <th colspan="4" class="right">{str tag='remainingpoints' section='artefact.ilps'}</th><td class="right remainingpoints">{$units.remainingpoints}</td>
 </tr>
