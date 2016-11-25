@@ -41,7 +41,7 @@ $id = param_integer('id');
 
 // offset and limit for pagination
 $offset = param_integer('offset', 0);
-$limit = param_integer('limit', 20);
+$limit = param_integer('limit', 30);
 
 $ilp = new ArtefactTypeilp($id);
 if (!$USER->can_edit_artefact($ilp)) {
