@@ -311,7 +311,7 @@ class ArtefactTypeilp extends ArtefactType {
     public function render_self($options) {
         $this->add_to_render_path($options);
 
-        $limit = !isset($options['limit']) ? 20 : (int) $options['limit'];
+        $limit = !isset($options['limit']) ? 30 : (int) $options['limit'];
         $offset = isset($options['offset']) ? intval($options['offset']) : 0;
 
         $units = ArtefactTypeUnit::get_units($this->id, $offset, $limit);
@@ -652,7 +652,7 @@ class ArtefactTypeUnit extends ArtefactType {
      * @return array (grandtotalpoints: number, count: integer, data: array)
      * 
      */
-    public static function get_units($ilp, $offset = 0, $limit = 20) {
+    public static function get_units($ilp, $offset = 0, $limit = 30) {
 
         ($results = get_records_sql_array("
             SELECT a.id, at.artefact AS unit, at.status, at.points, " . db_format_tsfield('targetcompletion') . ", " . db_format_tsfield('datecompleted') . ",

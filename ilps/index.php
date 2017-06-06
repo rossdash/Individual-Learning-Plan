@@ -40,7 +40,7 @@ define('TITLE', get_string('myilps', 'artefact.ilps'));
 
 // offset and limit for pagination
 $offset = param_integer('offset', 0);
-$limit = param_integer('limit', 20);
+$limit = param_integer('limit', 30);
 
 $ilps = ArtefactTypeIlp::get_ilps($offset, $limit);
 ArtefactTypeIlp::build_ilps_list_html($ilps);
