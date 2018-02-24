@@ -41,7 +41,7 @@ $id = param_integer('id');
 
 // offset and limit for pagination
 $offset = param_integer('offset', 0);
-$limit = param_integer('limit', 30);
+$limit = param_integer('limit', 20);
 
 $ilp = new ArtefactTypeilp($id);
 if (!$USER->can_edit_artefact($ilp)) {
@@ -59,8 +59,8 @@ addLoadEvent(function () {
 EOF;
 
 $smarty = smarty(array('paginator'));
-$smarty->assign_by_ref('units', $units);
-$smarty->assign_by_ref('ilp', $id);
+$smarty->assign('units', $units);
+$smarty->assign('ilp', $id);
 $smarty->assign('strnounitsaddone', get_string('nounitsaddone', 'artefact.ilps', '<a href="' . get_config('wwwroot') . 'artefact/ilps/new.php?id=' . $ilp->get('id') . '">', '</a>'));
 $smarty->assign('PAGEHEADING', get_string("ilpsunits", "artefact.ilps", $ilp->get('title')));
 $smarty->assign('INLINEJAVASCRIPT', $js);

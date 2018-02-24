@@ -35,7 +35,7 @@ require_once(get_config('docroot') . 'blocktype/lib.php');
 require_once(get_config('docroot') . 'artefact/ilps/blocktype/ilps/lib.php');
 
 $offset = param_integer('offset', 0);
-$limit = param_integer('limit', 30);
+$limit = param_integer('limit', 20);
 
 if ($blockid = param_integer('block', null)) {
     $bi = new BlockInstance($blockid);

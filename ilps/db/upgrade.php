@@ -34,6 +34,10 @@ function xmldb_artefact_ilps_upgrade($oldversion = 0) {
         set_field('artefact', 'container', 1, 'artefacttype', 'ilp');
     }
 
+     if ($oldversion < 2018022400) {
+        execute_sql("ALTER TABLE {artefact_ilps_unit} CHANGE points points DECIMAL(4,1)");
+    }
+
     return true;
 }
 

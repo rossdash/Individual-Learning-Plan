@@ -33,7 +33,7 @@ require(dirname(dirname(dirname(__FILE__))) . '/init.php');
 safe_require('artefact', 'ilps');
 
 $ilp = param_integer('id');
-$limit = param_integer('limit', 30);
+$limit = param_integer('limit', 20);
 $offset = param_integer('offset', 0);
 
 $units = ArtefactTypeUnit::get_units($ilp, $offset, $limit);

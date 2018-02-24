@@ -40,7 +40,7 @@ define('TITLE', get_string('myilps', 'artefact.ilps'));
 
 // offset and limit for pagination
 $offset = param_integer('offset', 0);
-$limit = param_integer('limit', 30);
+$limit = param_integer('limit', 20);
 
 $ilps = ArtefactTypeIlp::get_ilps($offset, $limit);
 ArtefactTypeIlp::build_ilps_list_html($ilps);
@@ -52,7 +52,7 @@ addLoadEvent(function () {
 EOF;
 
 $smarty = smarty(array('paginator'));
-$smarty->assign_by_ref('ilps', $ilps);
+$smarty->assign('ilps', $ilps);
 $smarty->assign('strnoilpsaddone', get_string('noilpsaddone', 'artefact.ilps', '<a href="' . get_config('wwwroot') . 'artefact/ilps/new.php">', '</a>'));
 $smarty->assign('PAGEHEADING', hsc(get_string("myilps", "artefact.ilps")));
 $smarty->assign('INLINEJAVASCRIPT', $js);
