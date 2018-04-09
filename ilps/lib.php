@@ -76,7 +76,7 @@ class ArtefactTypeilp extends ArtefactType {
 
     /**
      * This function returns the points assigned to the ILP.
-     * 
+     *
      */
     public static function get_points($id) {
         $points = get_field('artefact_ilps_points', 'points', 'artefact', $id);
@@ -133,7 +133,7 @@ class ArtefactTypeilp extends ArtefactType {
     }
 
     public static function get_icon($options = null) {
-        
+
     }
 
     public static function is_singular() {
@@ -174,7 +174,7 @@ class ArtefactTypeilp extends ArtefactType {
      */
     public static function build_ilps_list_html(&$ilps) {
         $smarty = smarty_core();
-        $smarty->assign_by_ref('ilps', $ilps);
+        $smarty->assign('ilps', $ilps);
         $ilps['tablerows'] = $smarty->fetch('artefact:ilps:ilpslist.tpl');
         $pagination = build_pagination(array(
             'id' => 'ilplist_pagination',
@@ -224,7 +224,7 @@ class ArtefactTypeilp extends ArtefactType {
 
         $artefact->set('title', $values['title']);
         $artefact->set('description', $values['description']);
-        $artefact->set('points', (int) $values['points']);
+        $artefact->set('points', $values['points']);
         $artefact->commit();
 
         $SESSION->add_ok_msg(get_string('ilpsavedsuccessfully', 'artefact.ilps'));
@@ -311,7 +311,7 @@ class ArtefactTypeilp extends ArtefactType {
     public function render_self($options) {
         $this->add_to_render_path($options);
 
-        $limit = !isset($options['limit']) ? 30 : (int) $options['limit'];
+        $limit = !isset($options['limit']) ? 20 : (int) $options['limit'];
         $offset = isset($options['offset']) ? intval($options['offset']) : 0;
 
         $units = ArtefactTypeUnit::get_units($this->id, $offset, $limit);
@@ -333,7 +333,7 @@ class ArtefactTypeilp extends ArtefactType {
         ArtefactTypeUnit::render_units($units, $template, $options, $pagination);
 
         $smarty = smarty_core();
-        $smarty->assign_by_ref('units', $units);
+        $smarty->assign('units', $units);
         if (isset($options['viewid'])) {
             $smarty->assign('artefacttitle', '<a href="' . $baseurl . '">' . hsc($this->get('title')) . '</a>');
         } else {
@@ -381,7 +381,7 @@ class ArtefactTypeUnit extends ArtefactType {
     }
 
     public static function get_icon($options = null) {
-        
+
     }
 
     public static function is_singular() {
@@ -449,7 +449,7 @@ class ArtefactTypeUnit extends ArtefactType {
         db_commit();
     }
 
-    public static function bulk_delete($artefactids) {
+    public static function bulk_delete($artefactids, $log = false) {
         if (empty($artefactids)) {
             return;
         }
@@ -544,9 +544,6 @@ class ArtefactTypeUnit extends ArtefactType {
                 'defaultvalue' => '0',
                 'title' => get_string('points', 'artefact.ilps'),
                 'description' => get_string('pointsdesc', 'artefact.ilps'),
-                'rules' => array(
-                    'integer' => true,
-                ),
             ),
         );
 
@@ -650,9 +647,9 @@ class ArtefactTypeUnit extends ArtefactType {
      * @param limit how many units to display per page
      * @param offset current page to display
      * @return array (grandtotalpoints: number, count: integer, data: array)
-     * 
+     *
      */
-    public static function get_units($ilp, $offset = 0, $limit = 30) {
+    public static function get_units($ilp, $offset = 0, $limit = 20) {
 
         ($results = get_records_sql_array("
             SELECT a.id, at.artefact AS unit, at.status, at.points, " . db_format_tsfield('targetcompletion') . ", " . db_format_tsfield('datecompleted') . ",
@@ -670,6 +667,7 @@ class ArtefactTypeUnit extends ArtefactType {
 
 
         foreach ($results as $result) {
+            $result->points+=0;//removes decimals if points is an integer
 
             $grandtotalpoints = $grandtotalpoints + $result->points;
 
@@ -707,8 +705,8 @@ class ArtefactTypeUnit extends ArtefactType {
     public function build_units_list_html(&$units) {
         $summarypoints = ArtefactTypeUnit::get_summarypoints($units['id']);
         $smarty = smarty_core();
-        $smarty->assign_by_ref('units', $units);
-        $smarty->assign_by_ref('summarypoints', $summarypoints);
+        $smarty->assign('units', $units);
+        $smarty->assign('summarypoints', $summarypoints);
         $units['tablerows'] = $smarty->fetch('artefact:ilps:unitslist.tpl');
         $pagination = build_pagination(array(
             'id' => 'unitlist_pagination',
@@ -734,8 +732,8 @@ class ArtefactTypeUnit extends ArtefactType {
     // @TODO: make blocktype use this too
     public function render_units(&$units, $template, $options, $pagination) {
         $smarty = smarty_core();
-        $smarty->assign_by_ref('units', $units);
-        $smarty->assign_by_ref('options', $options);
+        $smarty->assign('units', $units);
+        $smarty->assign('options', $options);
         $units['tablerows'] = $smarty->fetch($template);
 
         if ($units['limit'] && $pagination) {

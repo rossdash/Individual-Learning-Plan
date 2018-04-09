@@ -14,7 +14,7 @@
                 <FIELD NAME="status" TYPE="text" NOTNULL="false" />
                 <FIELD NAME="targetcompletion" TYPE="datetime" NOTNULL="false" />
                 <FIELD NAME="datecompleted" TYPE="datetime" NOTNULL="false" />
-                <FIELD NAME="points" TYPE="number" LENGTH="2" DECIMALS="0" NOTNULL="true" DEFAULT="0" />
+                <FIELD NAME="points" TYPE="number" LENGTH="4" DECIMALS="1" NOTNULL="true" DEFAULT="0" />
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="artefact" />

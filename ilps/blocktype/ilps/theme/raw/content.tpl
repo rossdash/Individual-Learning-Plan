@@ -1,6 +1,6 @@
 <div class="blockinstance-content">
     {if $units.data}
-        <table id="unittable_{$blockid}" class="ilpsblocktable">
+        <table id="unittable_{$blockid}" class="ilpsblocktable table">
             <thead>
                 <tr>
                     <th class="c1">{str tag='title' section='artefact.ilps'}</th>

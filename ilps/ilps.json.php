@@ -32,7 +32,7 @@ define('JSON', 1);
 require(dirname(dirname(dirname(__FILE__))) . '/init.php');
 safe_require('artefact', 'ilps');
 
-$limit = param_integer('limit', 30);
+$limit = param_integer('limit', 20);
 $offset = param_integer('offset', 0);
 
 $ilps = ArtefactTypeIlp::get_ilps($offset, $limit);
